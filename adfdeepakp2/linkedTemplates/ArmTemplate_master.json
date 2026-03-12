@@ -1,0 +1,112 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfdeepakp2"
+		},
+		"LS_OnPrem_Files_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_OnPrem_Files'"
+		},
+		"SqlServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SqlServer1'"
+		},
+		"adls_LS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'adls_LS'"
+		},
+		"HttpServer_LS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/"
+		},
+		"LS_OnPrem_Files_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\Users\\deepa\\Documents\\ADE_course\\onprem_project"
+		},
+		"LS_OnPrem_Files_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "deepak_mali@outlook.com"
+		},
+		"SqlServer1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "SUMALAPTOP\\SQLEXPRESS"
+		},
+		"SqlServer1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "missionSQL"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ssms_db_login"
+		},
+		"adls_LS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://deepakadls001.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adfdeepakp2_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"adls_LS_accountKey": {
+						"value": "[parameters('adls_LS_accountKey')]"
+					},
+					"LS_OnPrem_Files_password": {
+						"value": "[parameters('LS_OnPrem_Files_password')]"
+					},
+					"SqlServer1_password": {
+						"value": "[parameters('SqlServer1_password')]"
+					},
+					"HttpServer_LS_properties_typeProperties_url": {
+						"value": "[parameters('HttpServer_LS_properties_typeProperties_url')]"
+					},
+					"adls_LS_properties_typeProperties_url": {
+						"value": "[parameters('adls_LS_properties_typeProperties_url')]"
+					},
+					"LS_OnPrem_Files_properties_typeProperties_host": {
+						"value": "[parameters('LS_OnPrem_Files_properties_typeProperties_host')]"
+					},
+					"LS_OnPrem_Files_properties_typeProperties_userId": {
+						"value": "[parameters('LS_OnPrem_Files_properties_typeProperties_userId')]"
+					},
+					"SqlServer1_properties_typeProperties_server": {
+						"value": "[parameters('SqlServer1_properties_typeProperties_server')]"
+					},
+					"SqlServer1_properties_typeProperties_database": {
+						"value": "[parameters('SqlServer1_properties_typeProperties_database')]"
+					},
+					"SqlServer1_properties_typeProperties_userName": {
+						"value": "[parameters('SqlServer1_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

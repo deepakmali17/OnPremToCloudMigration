@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfdeepakp2"
+		},
+		"LS_OnPrem_Files_password": {
+			"value": ""
+		},
+		"SqlServer1_password": {
+			"value": ""
+		},
+		"adls_LS_accountKey": {
+			"value": ""
+		},
+		"HttpServer_LS_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/"
+		},
+		"LS_OnPrem_Files_properties_typeProperties_host": {
+			"value": "C:\\Users\\deepa\\Documents\\ADE_course\\onprem_project"
+		},
+		"LS_OnPrem_Files_properties_typeProperties_userId": {
+			"value": "deepak_mali@outlook.com"
+		},
+		"SqlServer1_properties_typeProperties_server": {
+			"value": "SUMALAPTOP\\SQLEXPRESS"
+		},
+		"SqlServer1_properties_typeProperties_database": {
+			"value": "missionSQL"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"value": "ssms_db_login"
+		},
+		"adls_LS_properties_typeProperties_url": {
+			"value": "https://deepakadls001.dfs.core.windows.net/"
+		}
+	}
+}
