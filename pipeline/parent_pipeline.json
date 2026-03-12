@@ -63,6 +63,90 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "onprem_ingestion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-14.northcentralus.logic.azure.com:443/workflows/55445ebd101d49c4831e1e5b2d2fb019/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=z_0WYPkZnrRzE29zMp55M-9Omr8M4XIDhxOVC8Lr8pE",
+					"body": {
+						"value": "{\n    \"pipeline_name\":\"@{pipeline().Pipeline}\",\n    \"run_id\" : \"@{pipeline().RunId}\",\n    \"status\" : \"@{if(equals(activity('onprem_ingestion').status, 'Failed'), string(activity('onprem_ingestion').error), 'Successful')}\"\n    \n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Web2",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "API ingestion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-14.northcentralus.logic.azure.com:443/workflows/55445ebd101d49c4831e1e5b2d2fb019/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=z_0WYPkZnrRzE29zMp55M-9Omr8M4XIDhxOVC8Lr8pE",
+					"body": {
+						"value": "{\n    \"pipeline_name\":\"@{pipeline().Pipeline}\",\n    \"run_id\" : \"@{pipeline().RunId}\",\n    \"status\" : \"@{if(equals(activity('API ingestion').status, 'Failed'), string(activity('API ingestion').error), 'Successful')}\"\n    \n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Web3",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "SQL ingestion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-14.northcentralus.logic.azure.com:443/workflows/55445ebd101d49c4831e1e5b2d2fb019/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=z_0WYPkZnrRzE29zMp55M-9Omr8M4XIDhxOVC8Lr8pE",
+					"body": {
+						"value": "{\n    \"pipeline_name\":\"@{pipeline().Pipeline}\",\n    \"run_id\" : \"@{pipeline().RunId}\",\n    \"status\" : \"@{if(equals(activity('SQL ingestion').status, 'Failed'), string(activity('SQL ingestion').error), 'Successful')}\"\n    \n}",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"annotations": []
