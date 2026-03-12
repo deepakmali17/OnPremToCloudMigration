@@ -94,7 +94,10 @@
 				"outputs": [
 					{
 						"referenceName": "csv_adls_DS",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"fileName": "DimAirline.csv"
+						}
 					}
 				]
 			}
