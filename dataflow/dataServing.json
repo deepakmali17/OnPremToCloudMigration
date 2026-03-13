@@ -1,0 +1,219 @@
+{
+	"name": "dataServing",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "adls_LS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "DimAirline"
+				},
+				{
+					"linkedService": {
+						"referenceName": "adls_LS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "DimFlight"
+				},
+				{
+					"linkedService": {
+						"referenceName": "adls_LS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "FactBooking"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "adls_LS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "top3airline"
+				},
+				{
+					"linkedService": {
+						"referenceName": "adls_LS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "window1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "aggregate2"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "join3"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "alterRow2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          airline_id as short,",
+				"          airline_name as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'landing',",
+				"     folderPath: 'On_prem_project/Silver/DimAirline') ~> DimAirline",
+				"source(output(",
+				"          flight_id as short,",
+				"          flight_number as string,",
+				"          departure_time as string,",
+				"          arrival_time as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'landing',",
+				"     folderPath: 'On_prem_project/Silver/DimFlight') ~> DimFlight",
+				"source(output(",
+				"          booking_id as short,",
+				"          passenger_id as short,",
+				"          flight_id as short,",
+				"          airline_id as short,",
+				"          origin_airport_id as short,",
+				"          destination_airport_id as short,",
+				"          booking_date as string,",
+				"          ticket_cost as integer,",
+				"          flight_duration_mins as short,",
+				"          checkin_status as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'landing',",
+				"     folderPath: 'On_prem_project/Silver/FactBooking') ~> FactBooking",
+				"FactBooking, DimAirline join(FactBooking@airline_id == DimAirline@airline_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          airline_id = DimAirline@airline_id,",
+				"          airline_name,",
+				"          country,",
+				"          origin_airport_id,",
+				"          destination_airport_id,",
+				"          booking_date,",
+				"          ticket_cost",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 aggregate(groupBy(airline_name),",
+				"     ticket_cost = sum(ticket_cost)) ~> aggregate1",
+				"aggregate1 window(desc(ticket_cost, true),",
+				"     ranks = denseRank()) ~> window1",
+				"window1 filter(ranks <4) ~> filter1",
+				"filter1 alterRow(upsertIf(1==1)) ~> AlterRow1",
+				"FactBooking, DimFlight join(FactBooking@flight_id == DimFlight@flight_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 select(mapColumn(",
+				"          flight_number,",
+				"          flight_id = DimFlight@flight_id,",
+				"          airline_id",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 aggregate(groupBy(airline_id),",
+				"     total_flights = countDistinct(flight_id)) ~> aggregate2",
+				"aggregate2 sort(desc(total_flights, true)) ~> sort1",
+				"sort1, DimAirline join(aggregate2@airline_id == DimAirline@airline_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join3",
+				"join3 select(mapColumn(",
+				"          airline_id = aggregate2@airline_id,",
+				"          airline_name,",
+				"          country,",
+				"          total_flights",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select3 alterRow(upsertIf(1==1)) ~> alterRow2",
+				"AlterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'landing',",
+				"     folderPath: 'On_prem_project/Gold/top3airline',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['airline_name'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> top3airline",
+				"alterRow2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'landing',",
+				"     folderPath: 'On_prem_project/Gold/TotalFlightsInEachAirline',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
