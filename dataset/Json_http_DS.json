@@ -1,0 +1,19 @@
+{
+	"name": "Json_http_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "HttpServer_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "deepakmali17/OnPremToCloudMigration/refs/heads/main/InputFiles/DimAirport.json"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

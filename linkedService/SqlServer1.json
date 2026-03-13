@@ -1,0 +1,21 @@
+{
+	"name": "SqlServer1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "SUMALAPTOP\\SQLEXPRESS",
+			"database": "missionSQL",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "ssms_db_login",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiMDNlZDhhYy00NGZiLTRhNjktODU5My1mYTU0NzE4ZWU0OTMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "deepak-selfhosted",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

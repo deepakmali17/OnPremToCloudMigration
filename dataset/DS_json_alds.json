@@ -1,0 +1,37 @@
+{
+	"name": "DS_json_alds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DimAirport.json",
+				"folderPath": "On_prem_project/Bronze",
+				"fileSystem": "landing"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"airport_id": {
+					"type": "integer"
+				},
+				"airport_name": {
+					"type": "string"
+				},
+				"city": {
+					"type": "string"
+				},
+				"country": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
